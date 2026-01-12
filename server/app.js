@@ -6,6 +6,8 @@ const morgan = require("morgan");
 const laptopRouter = require("./routers/laptop.router");
 const userRouter = require("./routers/user.router");
 const path = require("path");
+const authRouter = require("./routers/auth.router");
+const cookieParser = require("cookieparser");
 require("dotenv").config();
 
 const app = express();
@@ -16,12 +18,14 @@ if (process.env.NODE_ENV === "dev") {
 
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 // app.use("/laptops/images", path.join(__dirname, "uploads/laptops"))
 
 // routers
 
 app.use("/api/laptops", laptopRouter);
 app.use("/api/users", userRouter);
+app.use("api/auth", authRouter);
 
 app.use(globalErrorHandler);
 

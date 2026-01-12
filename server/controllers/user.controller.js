@@ -6,83 +6,6 @@ const User = require("../models/user.model");
 const { default: mongoose } = require("mongoose");
 
 
-const signToken = (id, role) => {
-
-    return jwt.sign({id, role}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRE});
-    
-}
-
-const createSendToken = (user, statusCode, res) => {
-
-    const token = signToken(user._id, user.role);
-
-    const cookieOption = {
-        maxAge: ms(process.env.JWT_EXPIRE),
-        httpOnly: true,
-        secure: process.env.NODE_ENV !== "dev",
-        samSite: "Lax"
-    }
-
-    user.password = undefined;
-
-    res.cookies("ls", token, cookieOption);
-
-    res.status(statusCode).json({
-        status: "succasse",
-        message: "User was created! please verify email",
-        data: { user }
-    })
-
-
-}
-
-const signup = catchAsync(async (req, res, next) => {
-
-    const { fullname, email, password, phoneNumber, role, profileImg } = req.body
-
-    if (!fullname || !email || !password || !phoneNumber) {
-        return next(new AppError("All field is required", 400));
-    }
-
-    const user = await User.create({
-        fullname,
-        email,
-        password,
-        phoneNumber,
-        role,
-        profileImg
-    })
-
-
-    createSendToken(user, 201, res);
-
-})
-
-const login = catchAsync(async (req, res, next) => {
-
-    const { email, password } = req.body
-
-    if (!email || !password) {
-        return next(new AppError("Email and Password required", 400));
-    }
-
-    const user = await User.findOne({email: email}).select("+password");
-
-    if (!user) {
-        return next(new AppError("User not found", 404));
-    }
-
-    const isCorrect = await user.comparePassword(password, user.password);
-
-
-    if (!isCorrect) {
-        return next(new AppError("Email or Password is incorrect", 404));
-    }
-
-    return res.status(200).send("You login saccessfuly");
-
-})
-
 const deleteUserById = catchAsync(async (req, res, next) => {
 
     const { id } = req.params
@@ -147,8 +70,6 @@ const getUserById = catchAsync(async (req, res, next) => {
 
 
 module.exports = {
-    signup, 
-    login,
     deleteUserById,
     patchUserById,
     getUserById
