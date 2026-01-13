@@ -1,11 +1,12 @@
 const express = require("express");
 const { getUserById, patchUserById, deleteUserById } = require("../controllers/user.controller");
-const { protect, allowedTo } = require("../middlewares/user.middleware");
-;
+const protect = require("../middlewares/auth.middleware");
+const allowedTo = require("../middlewares/roles.middleware");
+
 
 const userRouter = express.Router();
 
-userRouter.get("/:id", getUserById);
+userRouter.get("/:id", protect, getUserById);
 
 userRouter.delete("/:id", protect, allowedTo("user"), deleteUserById);
 

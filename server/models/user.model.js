@@ -41,18 +41,22 @@ const userSchema = new mongoose.Schema({
     isActive: {
         type: Boolean,
         default: false
+    },
+
+    phoneNumber: {
+        type: Number,
+        require: [true, "User phone number is requried"],
+        unique: [true, "User phone number must be unique"]
     }
 
 }, { timestamps: true })
 
-userSchema.pre("save", async function (next) {
-    if(!this.isModified("password")) {
-        return next();
+userSchema.pre("save", async function () {
+    if (!this.isModified("password")) {
+        return;
     }
 
     this.password = await bcrypt.hash(this.password, 12);
-
-    next();
 })
 
 userSchema.methods.comparePassword = async (candidate, password) => {
@@ -62,7 +66,7 @@ userSchema.methods.comparePassword = async (candidate, password) => {
 }
 
 userSchema.methods.signToken = function () {
-    return jwt.sign({id: this._id, role: this.role}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES});
+    return jwt.sign({id: this._id, role: this.role}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRE});
 }
 
 const User = mongoose.model("Users", userSchema);

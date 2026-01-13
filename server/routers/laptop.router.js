@@ -1,13 +1,14 @@
 const express = require("express");
 const { getLaptops, getLaptopById, createLaptop, deleteLaptopById, patchLaptopById } = require("../controllers/laptop.controller");
 const upload = require("../config/uploadImages");
-const { protect, allowedTo } = require("../middlewares/user.middleware");
+const allowedTo = require("../middlewares/roles.middleware");
+const protect = require("../middlewares/auth.middleware");
 
 const laptopRouter = express.Router();
 
-laptopRouter.get("/", getLaptops);
+laptopRouter.get("/", protect, getLaptops);
 
-laptopRouter.get("/:id", getLaptopById);
+laptopRouter.get("/:id", protect, getLaptopById);
 
 laptopRouter.post("/", protect, allowedTo("amdin"), upload.array("images", 4), createLaptop);
 

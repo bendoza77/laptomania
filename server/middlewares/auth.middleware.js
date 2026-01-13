@@ -3,18 +3,6 @@ const AppError = require("../utils/AppError");
 const catchAsync = require("../utils/CatchAsync");
 const jwt = require("jsonwebtoken");
 
-const allowedTo = (...roles) => {
-
-    return (req, res, next) => {
-        if (!roles.includes(req.user.role)) {
-            return next(new AppError("You dont have perrmision do to this action", 401));
-        }
-
-        next();
-    }
-
-}
-
 
 const protect = catchAsync(async (req, res, next) => {
 
@@ -52,7 +40,4 @@ const protect = catchAsync(async (req, res, next) => {
 
 })
 
-module.exports = {
-    allowedTo,
-    protect
-}
+module.exports = protect

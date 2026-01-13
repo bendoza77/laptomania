@@ -17,7 +17,7 @@ const createSendToken = (user, statusCode, res) => {
 
     user.password = undefined;
 
-    res.cookies("ls", token, cookieOption);
+    res.cookie("ls", token, cookieOption);
 
     res.status(statusCode).json({
         status: "succasse",
@@ -29,8 +29,7 @@ const createSendToken = (user, statusCode, res) => {
 }
 
 const signup = catchAsync(async (req, res, next) => {
-
-    const { fullname, email, password, phoneNumber, profileImg } = req.body
+    const { fullname, email, password, phoneNumber } = req.body
 
     if (!fullname || !email || !password || !phoneNumber) {
         return next(new AppError("All field is required", 400));
@@ -41,7 +40,6 @@ const signup = catchAsync(async (req, res, next) => {
         email,
         password,
         phoneNumber,
-        profileImg
     })
 
 
@@ -75,7 +73,42 @@ const login = catchAsync(async (req, res, next) => {
 })
 
 
+const authLogin = catchAsync(async (req, res, next) => {
+
+    const { user } = req;
+
+    if (user) {
+        return res.json({
+            status: "succasse",
+            data: { user }
+        }) 
+    }
+
+    res.json({
+        status: "failed",
+        message: "User is not login"
+    });
+
+
+})
+
+const logout = catchAsync(async (req, res, next) => {
+
+    res.clearCookie("ls", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV !== "dev",
+        samSite: "Lax"
+    })
+
+    return res.json({
+        message: "You logout from your accounte"
+    })
+
+})
+
 module.exports = {
     signup,
-    login
+    login,
+    authLogin,
+    logout
 }
