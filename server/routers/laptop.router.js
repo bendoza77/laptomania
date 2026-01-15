@@ -10,7 +10,7 @@ laptopRouter.get("/", protect, getLaptops);
 
 laptopRouter.get("/:id", protect, getLaptopById);
 
-laptopRouter.post("/", protect, allowedTo("amdin"), upload.array("images", 4), createLaptop);
+laptopRouter.post("/", protect, allowedTo("admin"), upload.array("images", 4), createLaptop);
 
 laptopRouter.delete("/:id", protect, allowedTo("admin, moderator"), deleteLaptopById);
 

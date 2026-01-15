@@ -21,7 +21,8 @@ app.use(cors({
     methods: ["GET", "POST", "DELETE", "PATCH"],
     credentials: true
 }));
-app.use(express.json());
+app.use(express.json({ limit: "5mb" })); // increase JSON limit
+app.use(express.urlencoded({ limit: "5mb", extended: true }));
 app.use(cookieParser());
 // app.use("/laptops/images", path.join(__dirname, "uploads/laptops"))
 

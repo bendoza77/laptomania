@@ -11,7 +11,7 @@ const AuthProviver = ({children}) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const authoLogin = async () => {
+        (async () => {
 
             try {
 
@@ -23,18 +23,16 @@ const AuthProviver = ({children}) => {
                 const res = await req.json();
 
                 if (!req.ok) {
-                   alert(res.message);
+                    throw new Error('User is not login');
                 }
-
+                
                 setUser(res.data.user);
                 navigate("/profile")
 
             } catch (error) {
                 console.log(error);
             }
-        }
-
-        authoLogin();
+        })();
     }, []);
 
     const logout = async () => {
@@ -114,8 +112,6 @@ const AuthProviver = ({children}) => {
         } catch (error) {
             console.log(error);
         }
-
-
 
     }
 

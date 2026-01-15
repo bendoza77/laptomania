@@ -29,6 +29,10 @@ const getLaptopById = catchAsync( async (req, res, next) => {
 
 const createLaptop = catchAsync( async (req, res, next) => {
 
+    if (!req.files || req.files.length === 0) {
+        return next(new AppError("At least one image is required", 400));
+    }
+
     const data = req.body;
     const images = req.files.map(el => el.path);
     const result = await imageUpload("laptops", images);
@@ -36,7 +40,7 @@ const createLaptop = catchAsync( async (req, res, next) => {
 
     data.images = imageUrls;
     const property = ["brand", "model", "processor", "images", "ram", "storage", "price", 
-        "graphicsCard", "screenSize", "releaseDate", "isAvailable"]
+        "graphicsCard", "screenSize",];
 
     const keys = Object.keys(data);
     const check = property.every(el => keys.includes(el));
@@ -46,16 +50,15 @@ const createLaptop = catchAsync( async (req, res, next) => {
     }
 
 
-    await Laptop.create(data);
+    const newLaptop = await Laptop.create(data);
 
-    return res.status(201).send("Laptop is created");
+    return res.json(newLaptop);
 
 })
 
 const deleteLaptopById = catchAsync(async (req, res, next) => {
 
     const { id } = req.params;
-    const data = req.body
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return next(new AppError("Id is invalid", 400));
@@ -89,10 +92,13 @@ const patchLaptopById = catchAsync(async (req, res, next) => {
     }
 
     for (const [ key, value ] of Object.entries(data)) {
-        laptop.key = value;
+        if (value !== "") {
+            laptop[key] = value
+        }
     }
 
-    return res.send("Laptop information has changed");
+    await laptop.save({validateBeforeSave: false});
+    return res.send(laptop);
 
 })
 

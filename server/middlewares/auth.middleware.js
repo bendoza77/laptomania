@@ -19,6 +19,8 @@ const protect = catchAsync(async (req, res, next) => {
             return next(new AppError("Ls is not valid", 404))
         }
 
+        console.log(decode);
+
         const user = await User.findById(decode.id);
 
         if (!user) {

@@ -4,7 +4,7 @@ const AppError = require("../utils/AppError");
 const User = require("../models/user.model");
 
 
-const createSendToken = (user, statusCode, res) => {
+const createSendToken = (user, message, statusCode, res) => {
 
     const token = user.signToken();
 
@@ -21,7 +21,7 @@ const createSendToken = (user, statusCode, res) => {
 
     res.status(statusCode).json({
         status: "succasse",
-        message: "User was created! please verify email",
+        message: message,
         data: { user }
     })
 
@@ -43,7 +43,7 @@ const signup = catchAsync(async (req, res, next) => {
     })
 
 
-    createSendToken(user, 201, res);
+    createSendToken(user, "User was created! please verify email", 201, res);
 
 })
 
@@ -68,7 +68,8 @@ const login = catchAsync(async (req, res, next) => {
         return next(new AppError("Email or Password is incorrect", 404));
     }
 
-    return res.status(200).send("You login saccessfuly");
+
+    createSendToken(user, "User login successfull", 200, res);
 
 })
 

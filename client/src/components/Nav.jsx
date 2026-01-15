@@ -13,6 +13,7 @@ const Nav = () => {
                 <Link to={"/"}><button>Home</button></Link>
                 {user !== null && <Link to={"/Profile"}><button>Profile</button></Link>}
                 {user !== null && <button onClick={logout}>Log Out</button>}
+                {user !== null && <Link to={"/products"}><button>Products</button></Link>}
             </header>
         </>
     );
