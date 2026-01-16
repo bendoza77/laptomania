@@ -19,8 +19,16 @@ const laptopSchema = new mongoose.Schema(
     },
 
     images: [{
-      type: String,
-      require: [true, "images is required"]
+      public_id: {
+        type: String,
+        require: true,
+      },
+
+      url: {
+        type: String,
+        require: true
+      }
+
     }],
 
     ram: {

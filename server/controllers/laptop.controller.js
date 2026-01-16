@@ -2,7 +2,8 @@ const { default: mongoose } = require("mongoose");
 const Laptop = require("../models/laptop.model");
 const catchAsync = require("../utils/CatchAsync");
 const AppError = require("../utils/AppError");
-const imageUpload = require("../utils/images");
+const { imageUpload } = require("../utils/images");
+const { deleteImage } = require("../utils/images");
 
 const getLaptops = catchAsync(async (req, res, next) => {
     const laptops = await Laptop.find();
@@ -36,7 +37,7 @@ const createLaptop = catchAsync( async (req, res, next) => {
     const data = req.body;
     const images = req.files.map(el => el.path);
     const result = await imageUpload("laptops", images);
-    const imageUrls = result.map(el => el.secure_url)
+    const imageUrls = result.map(el => ({url: el.secure_url, public_id: el.public_id}));
 
     data.images = imageUrls;
     const property = ["brand", "model", "processor", "images", "ram", "storage", "price", 
@@ -65,6 +66,8 @@ const deleteLaptopById = catchAsync(async (req, res, next) => {
     }
 
     const laptop = await Laptop.findById(id);
+    const proimes = laptop.images.map(el => deleteImage(el.public_id));
+    await Promise.all(proimes);
 
     if (!laptop) {
         return next(new AppError("Laptop not found", 404));

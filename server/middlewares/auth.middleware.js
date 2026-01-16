@@ -13,13 +13,13 @@ const protect = catchAsync(async (req, res, next) => {
             return next(new AppError("User is not login", 400));
         }
 
+        
+
         const decode = jwt.verify(ls, process.env.JWT_SECRET);
 
         if (!decode) {
             return next(new AppError("Ls is not valid", 404))
         }
-
-        console.log(decode);
 
         const user = await User.findById(decode.id);
 

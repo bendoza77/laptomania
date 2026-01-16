@@ -7,13 +7,11 @@ const Laptop = (el) => {
     const pro = el.el
     const { user } = useAuth();
     const { laptopDelete, pacthLaptop, createLaptop } = useLaptop();
-    const [isOpen, useIsOpen] = useState(false);
-    const [open, useOpen] = useState(false);
-
+    const [isOpen, setIsOpen] = useState(false);
+    const [open, setOpen] = useState(false);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
         const formData = {
             brand: e.target.brand.value,
             model: e.target.model.value,
@@ -24,21 +22,19 @@ const Laptop = (el) => {
             screenSize: e.target.screenSize.value,
             price: e.target.price.value
         }
-
         pacthLaptop(pro._id, formData);
-        useIsOpen(false);
+        setIsOpen(false);
     }
 
     const handleCreate = (e) => {
         e.preventDefault();
-
         const formData = new FormData();
         formData.append("brand", e.target.brand.value);
         formData.append("model", e.target.model.value);
         formData.append("processor", e.target.processor.value);
         formData.append("ram", e.target.ram.value);
         formData.append("storage", e.target.storage.value);
-        formData.append("graphicsCard", e.target.graphicsCard.value);
+        formData.append("graphicCard", e.target.graphicCard.value);
         formData.append("screenSize", e.target.screenSize.value);
         formData.append("price", e.target.price.value);
 
@@ -46,67 +42,112 @@ const Laptop = (el) => {
             formData.append("images", e.target.images.files[i]);
         }
         createLaptop(formData);
-        useOpen(false);
-
+        setOpen(false);
     }
 
     return (
-        <>
-            <div>
-
-                <div>
-                    {pro.images.map(image => {
-                        return <img style={{width: "20%"}} src={image} alt="" />
-                    })}
+        <div className="max-w-4xl mx-auto p-6">
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+                
+                {/* Images Section */}
+                <div className="flex flex-wrap gap-4 p-6 bg-gray-100">
+                    {pro.images.map((image, index) => (
+                        <img 
+                            key={index} 
+                            className="w-32 h-32 object-cover rounded-lg shadow" 
+                            src={image.url} 
+                            alt="" 
+                        />
+                    ))}
                 </div>
 
-                <div>
-                    <p>Brand: {pro.brand}</p>
-                    <p>Model: {pro.model}</p>
-                    <p>Processor: {pro.processor}</p>
-                    <p>RAM: {pro.ram}</p>
-                    <p>Storage: {pro.storage}</p>
-                    <p>Graphic Card: {pro.graphicCard}</p>
-                    <p>Screen Size: {pro.screenSize}</p>
-                    <p>Price: {pro.price}</p>
+                {/* Details Section */}
+                <div className="p-6">
+                    <h2 className="text-3xl font-bold mb-6 text-gray-800">{pro.brand} {pro.model}</h2>
+                    
+                    <div className="grid grid-cols-2 gap-4 mb-8">
+                        <p className="text-gray-700"><span className="font-semibold">Processor:</span> {pro.processor}</p>
+                        <p className="text-gray-700"><span className="font-semibold">RAM:</span> {pro.ram}</p>
+                        <p className="text-gray-700"><span className="font-semibold">Storage:</span> {pro.storage}</p>
+                        <p className="text-gray-700"><span className="font-semibold">Graphic Card:</span> {pro.graphicCard}</p>
+                        <p className="text-gray-700"><span className="font-semibold">Screen Size:</span> {pro.screenSize}</p>
+                        <p className="text-2xl font-bold text-blue-600">Price: ${pro.price}</p>
+                    </div>
 
-                    {["admin", "moderator"].includes(user.role) && <button onClick={() => laptopDelete(pro._id)}>Delete laptop</button>}
-                    {["admin", "moderator"].includes(user.role) && <button onClick={() => useIsOpen(true)}>Change laptop</button>}
-                    {user.role === "admin" && <button onClick={() => useOpen(true)}>Create laptop</button>}
+                    {/* Buttons */}
+                    <div className="flex gap-3 flex-wrap">
+                        {["admin", "moderator"].includes(user.role) && (
+                            <>
+                                <button 
+                                    onClick={() => laptopDelete(pro._id)}
+                                    className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg transition"
+                                >
+                                    Delete Laptop
+                                </button>
+                                <button 
+                                    onClick={() => setIsOpen(true)}
+                                    className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg transition"
+                                >
+                                    Update Laptop
+                                </button>
+                            </>
+                        )}
+                        {user.role === "admin" && (
+                            <button 
+                                onClick={() => setOpen(true)}
+                                className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition"
+                            >
+                                Create Laptop
+                            </button>
+                        )}
+                    </div>
+                </div>
 
-                    {open && (
-                        <form onSubmit={handleCreate} encType="multipart/form-data">
-                            <input type="text" name="brand" placeholder="Brand" required/>
-                            <input type="text" name="model" placeholder="Model" required/>
-                            <input type="text" name="processor" placeholder="Processor" required/>
-                            <input type="text" name="ram" placeholder="RAM" required/>
-                            <input type="text" name="storage" placeholder="Storage" required/>
-                            <input type="text" name="graphicsCard" placeholder="Graphic Card" required/>
-                            <input type="text" name="screenSize" placeholder="Screen Size" required/>
-                            <input type="number" name="price" placeholder="Price" required/>
-                            <input type="file" name="images" multiple required/>
-                            <button>Create laptop</button>
-                            <button onClick={() => useOpen(false)}>Cancel</button>
+                {/* Create Form Modal */}
+                {open && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+                        <form onSubmit={handleCreate} encType="multipart/form-data" className="bg-white rounded-lg p-8 w-full max-w-md shadow-lg">
+                            <h3 className="text-2xl font-bold mb-6">Create Laptop</h3>
+                            <input className="w-full mb-4 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" type="text" name="brand" placeholder="Brand" required/>
+                            <input className="w-full mb-4 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" type="text" name="model" placeholder="Model" required/>
+                            <input className="w-full mb-4 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" type="text" name="processor" placeholder="Processor" required/>
+                            <input className="w-full mb-4 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" type="text" name="ram" placeholder="RAM" required/>
+                            <input className="w-full mb-4 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" type="text" name="storage" placeholder="Storage" required/>
+                            <input className="w-full mb-4 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" type="text" name="graphicCard" placeholder="Graphic Card" required/>
+                            <input className="w-full mb-4 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" type="text" name="screenSize" placeholder="Screen Size" required/>
+                            <input className="w-full mb-4 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" type="number" name="price" placeholder="Price" required/>
+                            <input className="w-full mb-6 p-2 border border-gray-300 rounded-lg" type="file" name="images" multiple required/>
+                            <div className="flex gap-3">
+                                <button className="flex-1 px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition">Create</button>
+                                <button type="button" onClick={() => setOpen(false)} className="flex-1 px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition">Cancel</button>
+                            </div>
                         </form>
-                    )}
+                    </div>
+                )}
 
-                    {isOpen && (<form onSubmit={(e) => handleSubmit(e, pro._id)}>
-                        <input type="text" name="brand" placeholder="Brand" />
-                        <input type="text" name="model" placeholder="Model" />
-                        <input type="text" name="processor" placeholder="Processor" />
-                        <input type="text" name="ram" placeholder="RAM" />
-                        <input type="text" name="storage" placeholder="Storage" />
-                        <input type="text" name="graphicCard" placeholder="Graphic Card" />
-                        <input type="text" name="screenSize" placeholder="Screen Size" />
-                        <input type="number" name="price" placeholder="Price" />
-                        <button type="submit">Update laptop</button>
-                        <button onClick={() => useIsOpen(false)}>Cancel</button>
-                    </form>)}
-                </div>
+                {/* Update Form Modal */}
+                {isOpen && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+                        <form onSubmit={handleSubmit} className="bg-white rounded-lg p-8 w-full max-w-md shadow-lg">
+                            <h3 className="text-2xl font-bold mb-6">Update Laptop</h3>
+                            <input className="w-full mb-4 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" type="text" name="brand" placeholder="Brand" />
+                            <input className="w-full mb-4 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" type="text" name="model" placeholder="Model" />
+                            <input className="w-full mb-4 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" type="text" name="processor" placeholder="Processor" />
+                            <input className="w-full mb-4 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" type="text" name="ram" placeholder="RAM" />
+                            <input className="w-full mb-4 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" type="text" name="storage" placeholder="Storage" />
+                            <input className="w-full mb-4 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" type="text" name="graphicCard" placeholder="Graphic Card" />
+                            <input className="w-full mb-4 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" type="text" name="screenSize" placeholder="Screen Size" />
+                            <input className="w-full mb-6 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" type="number" name="price" placeholder="Price" />
+                            <div className="flex gap-3">
+                                <button type="submit" className="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition">Update</button>
+                                <button type="button" onClick={() => setIsOpen(false)} className="flex-1 px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                )}
             </div>
-        </>
+        </div>
     );
-
 }
 
 export default Laptop;

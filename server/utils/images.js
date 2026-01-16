@@ -20,14 +20,24 @@ const imageUpload = async (folder, files) => {
 
         const result = await Promise.all(uploadedPrimes);
 
-        console.log(result)
-
-        // fs.unlinkSync(req.file.path); 
-
         return result;
     } catch(err) {
        return { message: "Error uploading image", error: err.message };
     }
 }
 
-module.exports = imageUpload;
+const deleteImage = async (publicId) => {
+    try {
+
+        const result = await cloudinary.uploader.destroy(publicId);
+        return result;
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+module.exports = {
+    imageUpload,
+    deleteImage
+}
