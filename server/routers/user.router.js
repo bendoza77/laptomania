@@ -2,6 +2,7 @@ const express = require("express");
 const { getUserById, patchUserById, deleteUserById } = require("../controllers/user.controller");
 const protect = require("../middlewares/auth.middleware");
 const allowedTo = require("../middlewares/roles.middleware");
+const { addCart } = require("../controllers/auth.controller");
 
 
 const userRouter = express.Router();

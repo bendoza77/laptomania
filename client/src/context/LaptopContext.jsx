@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { createContext } from "react";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 const LaptopContext = createContext();
 const API_URL = import.meta.env.VITE_CLIENT_URL
@@ -8,7 +9,7 @@ const useLaptop = () => useContext(LaptopContext);
 
 const LaptopProvider = ({ children }) => {
     
-    const [laptops, useLaptops] = useState([]);
+    const [laptops, setLaptops] = useState([]);
 
     const getLaptops = async () => {
 
@@ -23,7 +24,7 @@ const LaptopProvider = ({ children }) => {
                 throw new Error("Cant get laptops");
             }
 
-            useLaptops(res);
+            setLaptops(res);
 
         } catch (error) {
             console.log(error);
@@ -32,6 +33,8 @@ const LaptopProvider = ({ children }) => {
     }
 
     const laptopDelete = async (laptopId) => {
+
+        const toastId = toast.loading("Deleting laptop...");
 
         try {
 
@@ -44,16 +47,30 @@ const LaptopProvider = ({ children }) => {
                 throw new Error("Cant delete laptop");
             }
 
-            useLaptops(laptops.filter(laptop => laptop._id !== laptopId));
+            setLaptops(laptops.filter(laptop => laptop._id !== laptopId));
+
+            toast.update(toastId, {
+                render: "Laptop deletd succassefuly",
+                type: "success",
+                isLoading: false,
+                autoClose: 2000
+            })
 
         } catch (error) {
-            console.log(error);
+            toast.update(toastId, {
+                render: `Error: ${error}`,
+                type: "error",
+                isLoading: false,
+                autoClose: 2000
+            })
         }
 
 
     }
 
     const pacthLaptop = async (laptopsId, formData) => {
+
+        const toastId = toast.loading("Updateing laptop...");
 
         try {
 
@@ -67,24 +84,40 @@ const LaptopProvider = ({ children }) => {
             });
 
             const res = await req.json();
+            console.log(res);
 
             if (!req.ok) {
                 throw new Error("Cant update laptop");
             }
 
-            useLaptops(prev => {
+            setLaptops(prev => {
                 return prev.map(el => {
                     return el._id === laptopsId ? res : el
                 })
             })
 
+            toast.update(toastId, {
+                render: "Laptop update succassefuly",
+                type: "success",
+                isLoading: false,
+                autoClose: 2000
+            })
+
         } catch (error) {
-            console.log(error);
+            toast.update(toastId, {
+                render: `Error ${error}`,
+                type: "error",
+                isLoading: false,
+                autoClose: 2000
+            })
         }
 
     }
 
     const createLaptop = async (formData) => {
+
+        const toastId = toast.loading("creating laptop...");
+        
 
         try {
 
@@ -100,10 +133,21 @@ const LaptopProvider = ({ children }) => {
                 throw new Error("Cant create laptop");
             }
 
-            useLaptops(prev => [...prev, res]);
+            setLaptops(prev => [...prev, res]);
+            toast.update(toastId, {
+                render: "Laptop created succassefuly",
+                type: "success",
+                isLoading: false,
+                autoClose: 2000
+            })
 
         } catch (error) {
-            console.log(error);
+            toast.update(toastId, {
+                render: `Error ${error}`,
+                type: "error",
+                isLoading: false,
+                autoClose: 2000
+            })
         }
 
 

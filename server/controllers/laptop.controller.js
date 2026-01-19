@@ -94,6 +94,14 @@ const patchLaptopById = catchAsync(async (req, res, next) => {
         return next(new AppError("Laptop not found", 404));
     }
 
+    if (req.files) {
+        let imageUrls = laptop.images;
+        const images = req.files.map(file => file.path);
+        const result = await imageUpload("laptops", images);
+        console.log(result);
+        imageUrls = result;
+    }
+
     for (const [ key, value ] of Object.entries(data)) {
         if (value !== "") {
             laptop[key] = value
@@ -101,7 +109,7 @@ const patchLaptopById = catchAsync(async (req, res, next) => {
     }
 
     await laptop.save({validateBeforeSave: false});
-    return res.send(laptop);
+    return res.json(laptop);
 
 })
 

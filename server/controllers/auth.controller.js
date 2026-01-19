@@ -111,5 +111,5 @@ module.exports = {
     signup,
     login,
     authLogin,
-    logout
+    logout,
 }

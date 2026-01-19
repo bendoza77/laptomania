@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const AuthContext = createContext();
 const useAuth = () => useContext(AuthContext);
@@ -37,6 +38,8 @@ const AuthProviver = ({children}) => {
 
     const logout = async () => {
 
+        const toastId = toast.loading("User Logout...");
+
         try {
             const req = await fetch(`${API_URL}/api/auth/logout`, {
                 method: "POST",
@@ -44,13 +47,24 @@ const AuthProviver = ({children}) => {
             })
 
             const res = await req.json();
-            alert(res.message);
             setUser(null);
             navigate("/login");
 
+            toast.update(toastId, {
+                render: "You logout succassefuly",
+                type: "success",
+                isLoading: false,
+                autoClose: 2000
+            })
+
 
         } catch (error) {
-            console.log(error);
+            toast.update(toastId, {
+                render: `Errro: ${error}`,
+                type: "error",
+                isLoading: false,
+                autoClose: 2000
+            })
         }
 
 
@@ -58,6 +72,7 @@ const AuthProviver = ({children}) => {
 
     const signup = async (formObj) => {
 
+        const toastId = toast.loading("User signup...");
 
         try {
 
@@ -72,21 +87,33 @@ const AuthProviver = ({children}) => {
 
             const res = await req.json();
             if (!req.ok) {
-                alert(res.message);
+                throw new Error(res.message);
             }
 
             setUser(res.data.user);
-            alert(res.message);
             navigate("/profile")
+            toast.update(toastId, {
+                render: "You singup succassefuly",
+                type: "success",
+                isLoading: false,
+                autoClose: 2000
+            })
 
         } catch (error) {
-            console.log(error);
+            toast.update(toastId, {
+                render: `Errro: ${error}`,
+                type: "error",
+                isLoading: false,
+                autoClose: 2000
+            })
         }
 
 
     }
 
     const login = async (formObj) => {
+
+        const toastId = toast.loading("User login...");
 
         try {
 
@@ -102,15 +129,25 @@ const AuthProviver = ({children}) => {
             const res = await req.json();
 
             if (!req.ok) {
-                alert(res.message);
+                throw new Error(res.message);
             }
 
             setUser(res.data.user);
-            alert(res.message);
             navigate("/profile")
+            toast.update(toastId, {
+                render: "You login succassefuly",
+                type: "success",
+                isLoading: false,
+                autoClose: 2000
+            })
 
         } catch (error) {
-            console.log(error);
+            toast.update(toastId, {
+                render: `Errro: ${error}`,
+                type: "error",
+                isLoading: false,
+                autoClose: 2000
+            })
         }
 
     }

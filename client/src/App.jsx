@@ -1,10 +1,14 @@
 import { Route, Routes } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+
+
 import Home from "./pages/Home";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
-import Nav from "./components/Nav";
 import Products from "./pages/Products";
+import Nav from "./components/UI/Nav";
+
 
 const App = () => {
 
@@ -18,6 +22,7 @@ const App = () => {
         <Route path="/profile" element={<Profile />} />
         <Route path="/products" element={<Products />} />
       </Routes>
+    <ToastContainer position="bottom-right" />
     </>
   );
 

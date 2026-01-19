@@ -13,8 +13,6 @@ const protect = catchAsync(async (req, res, next) => {
             return next(new AppError("User is not login", 400));
         }
 
-        
-
         const decode = jwt.verify(ls, process.env.JWT_SECRET);
 
         if (!decode) {

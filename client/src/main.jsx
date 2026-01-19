@@ -4,12 +4,16 @@ import { AuthProviver } from './context/AuthContext.jsx'
 import { BrowserRouter } from 'react-router-dom'
 import { LaptopProvider } from './context/LaptopContext.jsx'
 import './index.css'
+import "./App.css"
+import { CartProvider } from './context/Cart.content.jsx'
 
 createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <AuthProviver>
        <LaptopProvider>
-         <App />
+         <CartProvider>
+          <App />
+         </CartProvider>
        </LaptopProvider>
       </AuthProviver>
     </BrowserRouter>
