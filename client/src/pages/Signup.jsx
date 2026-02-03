@@ -1,34 +1,59 @@
 import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 
 const Signup = () => {
-    const { signup } = useAuth();
+  const { signup } = useAuth();
+  const { t } = useLanguage();
+  const copy = t("signup");
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const formObj = {
-            fullname: e.target.userName.value,
-            email: e.target.userEmail.value,
-            password: e.target.userPassword.value,
-            phoneNumber: e.target.userNumber.value
-        }
-        signup(formObj);
-        e.target.reset();
-    }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formObj = {
+      fullname: e.target.userName.value,
+      email: e.target.userEmail.value,
+      password: e.target.userPassword.value,
+      phoneNumber: e.target.userNumber.value,
+    };
+    signup(formObj);
+    e.target.reset();
+  };
 
-    return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-            <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-                <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Sign Up</h2>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <input type="text" name="userName" placeholder="Enter your name" required className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
-                    <input type="email" name="userEmail" placeholder="Enter your email" required className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
-                    <input type="password" name="userPassword" placeholder="Enter your password" required className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
-                    <input type="text" name="userNumber" placeholder="Enter your phone number" required className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
-                    <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg transition duration-200">Sign up</button>
-                </form>
-            </div>
+  return (
+    <section className="flex min-h-[70vh] flex-col items-center justify-center animate-fade-up">
+      <div className="w-full max-w-2xl rounded-[3rem] border border-white/10 bg-white/5/40 p-12 text-white shadow-[0_25px_90px_rgba(15,23,42,0.7)] animate-blur-in">
+        <div className="space-y-4 text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.6em] text-indigo-300">{copy.tag}</p>
+          <h2 className="text-4xl font-bold">{copy.title}</h2>
+          <p className="text-sm text-slate-400">{copy.description}</p>
         </div>
-    );
-}
+
+        <form onSubmit={handleSubmit} className="mt-10 grid gap-6 md:grid-cols-2">
+          {[
+            { name: "userName", label: copy.fields.name.label, type: "text", placeholder: copy.fields.name.placeholder },
+            { name: "userEmail", label: copy.fields.email.label, type: "email", placeholder: copy.fields.email.placeholder },
+            { name: "userPassword", label: copy.fields.password.label, type: "password", placeholder: copy.fields.password.placeholder },
+            { name: "userNumber", label: copy.fields.phone.label, type: "text", placeholder: copy.fields.phone.placeholder },
+          ].map((field, index) => (
+            <label key={field.name} className="block text-sm text-slate-300 animate-fade-up" style={{ animationDelay: `${index * 60}ms` }}>
+              <span className="mb-2 inline-block text-xs uppercase tracking-[0.4em] text-slate-500">{field.label}</span>
+              <input
+                type={field.type}
+                name={field.name}
+                placeholder={field.placeholder}
+                required
+                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-slate-500 focus:border-indigo-400 focus:outline-none"
+              />
+            </label>
+          ))}
+          <div className="md:col-span-2 animate-slide-in" style={{ animationDelay: "220ms" }}>
+            <button className="w-full rounded-2xl bg-gradient-to-r from-indigo-500 to-blue-500 px-6 py-3 text-sm font-semibold uppercase tracking-[0.4em] text-white transition hover:brightness-110">
+              {copy.submit}
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+  );
+};
 
 export default Signup;

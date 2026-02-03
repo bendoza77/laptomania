@@ -4,17 +4,19 @@ import { AuthProviver } from './context/AuthContext.jsx'
 import { BrowserRouter } from 'react-router-dom'
 import { LaptopProvider } from './context/LaptopContext.jsx'
 import './index.css'
-import "./App.css"
 import { CartProvider } from './context/Cart.content.jsx'
+import { LanguageProvider } from './context/LanguageContext.jsx'
 
 createRoot(document.getElementById('root')).render(
-    <BrowserRouter>
-      <AuthProviver>
-       <LaptopProvider>
-         <CartProvider>
-          <App />
-         </CartProvider>
-       </LaptopProvider>
-      </AuthProviver>
-    </BrowserRouter>
+  <BrowserRouter>
+    <AuthProviver>
+      <LanguageProvider>
+        <LaptopProvider>
+          <CartProvider>
+            <App />
+          </CartProvider>
+        </LaptopProvider>
+      </LanguageProvider>
+    </AuthProviver>
+  </BrowserRouter>
 )

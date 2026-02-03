@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 require("dotenv").config();
 
 const userSchema = new mongoose.Schema({
@@ -48,6 +49,11 @@ const userSchema = new mongoose.Schema({
         type: Number,
         require: [true, "User phone number is requried"],
         unique: [true, "User phone number must be unique"]
+    },
+
+    verificationCode: {
+        type: String,
+        require: true
     }
 
 }, { timestamps: true })
@@ -68,6 +74,12 @@ userSchema.methods.comparePassword = async (candidate, password) => {
 
 userSchema.methods.signToken = function () {
     return jwt.sign({id: this._id, role: this.role}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRE});
+}
+
+userSchema.methods.createVerificationCode = function () {
+    const code = crypto.randomBytes(12).toString("hex");
+    this.verificationCode = code;
+    return code;
 }
 
 const User = mongoose.model("Users", userSchema);

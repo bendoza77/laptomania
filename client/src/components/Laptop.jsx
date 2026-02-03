@@ -2,112 +2,142 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useLaptop } from "../context/LaptopContext";
 import { useCart } from "../context/Cart.content";
+import { useLanguage } from "../context/LanguageContext";
 
-const Laptop = (el) => {
+const Laptop = ({ el: pro }) => {
+  const { user } = useAuth();
+  const { laptopDelete, pacthLaptop } = useLaptop();
+  const { addCart } = useCart();
+  const { t } = useLanguage();
+  const copy = t("laptop");
+  const [isOpen, setIsOpen] = useState(false);
 
-    const pro = el.el
-    const { user } = useAuth();
-    const { laptopDelete, pacthLaptop } = useLaptop();
-    const [isOpen, setIsOpen] = useState(false);
-    const { addCart } = useCart();
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formData = {
+      brand: e.target.brand.value,
+      model: e.target.model.value,
+      processor: e.target.processor.value,
+      ram: e.target.ram.value,
+      storage: e.target.storage.value,
+      graphicCard: e.target.graphicCard.value,
+      screenSize: e.target.screenSize.value,
+      price: e.target.price.value,
+    };
+    pacthLaptop(pro._id, formData);
+    setIsOpen(false);
+  };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const formData = {
-            brand: e.target.brand.value,
-            model: e.target.model.value,
-            processor: e.target.processor.value,
-            ram: e.target.ram.value,
-            storage: e.target.storage.value,
-            graphicCard: e.target.graphicCard.value,
-            screenSize: e.target.screenSize.value,
-            price: e.target.price.value
-        }
-        pacthLaptop(pro._id, formData);
-        setIsOpen(false);
-    }
-
-    return (
-        <div className="max-w-4xl mx-auto p-6">
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-                
-                {/* Images Section */}
-                <div className="flex flex-wrap gap-4 p-6 bg-gray-100">
-                    {pro.images.map((image, index) => (
-                        <img 
-                            key={index} 
-                            className="w-32 h-32 object-cover rounded-lg shadow" 
-                            src={image.url} 
-                            alt="" 
-                        />
-                    ))}
-                </div>
-
-                {/* Details Section */}
-                <div className="p-6">
-                    <h2 className="text-3xl font-bold mb-6 text-gray-800">{pro.brand} {pro.model}</h2>
-                    
-                    <div className="grid grid-cols-2 gap-4 mb-8">
-                        <p className="text-gray-700"><span className="font-semibold">Processor:</span> {pro.processor}</p>
-                        <p className="text-gray-700"><span className="font-semibold">RAM:</span> {pro.ram}</p>
-                        <p className="text-gray-700"><span className="font-semibold">Storage:</span> {pro.storage}</p>
-                        <p className="text-gray-700"><span className="font-semibold">Graphic Card:</span> {pro.graphicCard}</p>
-                        <p className="text-gray-700"><span className="font-semibold">Screen Size:</span> {pro.screenSize}</p>
-                        <p className="text-2xl font-bold text-blue-600">Price: ${pro.price}</p>
-                    </div>
-
-                    {/* Buttons */}
-                    <div className="flex gap-3 flex-wrap">
-                        {["admin", "moderator"].includes(user?.role) && (
-                            <>
-                                <button 
-                                    onClick={() => laptopDelete(pro._id)}
-                                    className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg transition"
-                                >
-                                    Delete Laptop
-                                </button>
-                                <button 
-                                    onClick={() => setIsOpen(true)}
-                                    className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg transition"
-                                >
-                                    Update Laptop
-                                </button>
-                            </>
-                        )}
-
-                        <button
-                            onClick={() => addCart(pro)} 
-                            className="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 active:scale-95 transition-all duration-200">
-                            Add to Cart
-                        </button>
-                    </div>
-                </div>
-
-
-                {/* Update Form Modal */}
-                {isOpen && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-                        <form onSubmit={handleSubmit} className="bg-white rounded-lg p-8 w-full max-w-md shadow-lg">
-                            <h3 className="text-2xl font-bold mb-6">Update Laptop</h3>
-                            <input className="w-full mb-4 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" type="text" name="brand" placeholder="Brand" />
-                            <input className="w-full mb-4 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" type="text" name="model" placeholder="Model" />
-                            <input className="w-full mb-4 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" type="text" name="processor" placeholder="Processor" />
-                            <input className="w-full mb-4 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" type="text" name="ram" placeholder="RAM" />
-                            <input className="w-full mb-4 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" type="text" name="storage" placeholder="Storage" />
-                            <input className="w-full mb-4 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" type="text" name="graphicCard" placeholder="Graphic Card" />
-                            <input className="w-full mb-4 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" type="text" name="screenSize" placeholder="Screen Size" />
-                            <input className="w-full mb-6 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" type="number" name="price" placeholder="Price" />
-                            <input className="w-full mb-6 p-2 border border-gray-300 rounded-lg" type="file" name="images" multiple/>
-                            <div className="flex gap-3">
-                                <button type="submit" className="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition">Update</button>
-                                <button type="button" className="flex-1 px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition">Cancel</button>
-                            </div>
-                        </form>
-                    </div>
-                )}
-            </div>
+  return (
+    <div className="flex flex-col gap-6 rounded-[2.3rem] border border-white/10 bg-slate-900/50 p-6 text-white animate-fade-up">
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-2 gap-3">
+          {pro.images?.slice(0, 2).map((image, index) => (
+            <img
+              key={index}
+              className="h-32 w-full rounded-2xl object-cover animate-scale-in"
+              style={{ animationDelay: `${index * 80}ms` }}
+              src={image.url}
+              alt={`${pro.brand} ${pro.model}`}
+            />
+          ))}
         </div>
-    );
-}
+        <div className="rounded-2xl border border-white/5 bg-white/5/10 p-4 animate-slide-in">
+          <p className="text-xs uppercase tracking-[0.5em] text-slate-400">{copy.signature}</p>
+          <h2 className="mt-2 text-2xl font-semibold">
+            {pro.brand} {pro.model}
+          </h2>
+          <p className="text-sm text-slate-400">{pro.processor}</p>
+          <p className="mt-4 text-3xl font-bold text-lime-300">${pro.price}</p>
+        </div>
+      </div>
+
+      <div className="grid gap-4 text-sm text-slate-300 sm:grid-cols-2">
+        <p className="animate-fade-up" style={{ animationDelay: "40ms" }}>
+          <span className="text-slate-500">{copy.specs.ram}:</span> {pro.ram}GB
+        </p>
+        <p className="animate-fade-up" style={{ animationDelay: "80ms" }}>
+          <span className="text-slate-500">{copy.specs.storage}:</span> {pro.storage}GB SSD
+        </p>
+        <p className="animate-fade-up" style={{ animationDelay: "120ms" }}>
+          <span className="text-slate-500">{copy.specs.gpu}:</span> {pro.graphicCard}
+        </p>
+        <p className="animate-fade-up" style={{ animationDelay: "160ms" }}>
+          <span className="text-slate-500">{copy.specs.display}:</span> {pro.screenSize}
+        </p>
+      </div>
+
+      <div className="flex flex-wrap gap-3 animate-slide-in">
+        {["admin", "moderator"].includes(user?.role) && (
+          <>
+            <button
+              onClick={() => laptopDelete(pro._id)}
+              className="rounded-2xl border border-rose-500/60 px-5 py-2 text-sm font-semibold uppercase tracking-[0.35em] text-rose-300 transition hover:bg-rose-500/10"
+            >
+              {copy.delete}
+            </button>
+            <button
+              onClick={() => setIsOpen(true)}
+              className="rounded-2xl border border-amber-400/60 px-5 py-2 text-sm font-semibold uppercase tracking-[0.35em] text-amber-200 transition hover:bg-amber-400/10"
+            >
+              {copy.update}
+            </button>
+          </>
+        )}
+        <button
+          onClick={() => addCart(pro)}
+          className="rounded-2xl bg-gradient-to-r from-indigo-500 to-blue-500 px-6 py-3 text-sm font-semibold uppercase tracking-[0.4em] text-white transition hover:brightness-110"
+        >
+          {copy.addToCart}
+        </button>
+      </div>
+
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+          <form onSubmit={handleSubmit} className="w-full max-w-xl space-y-4 rounded-3xl border border-white/10 bg-slate-900/90 p-8 animate-blur-in">
+            <div>
+              <p className="text-xs uppercase tracking-[0.5em] text-slate-500">{copy.modalTitle}</p>
+              <h3 className="text-2xl font-semibold text-white">
+                {pro.brand} {pro.model}
+              </h3>
+            </div>
+            {[
+              { name: "brand", label: copy.fields.brand },
+              { name: "model", label: copy.fields.model },
+              { name: "processor", label: copy.fields.processor },
+              { name: "ram", label: copy.fields.ram },
+              { name: "storage", label: copy.fields.storage },
+              { name: "graphicCard", label: copy.fields.graphicCard },
+              { name: "screenSize", label: copy.fields.screenSize },
+              { name: "price", label: copy.fields.price, type: "number" },
+            ].map((field, index) => (
+              <label key={field.name} className="block text-sm text-slate-400 animate-fade-up" style={{ animationDelay: `${index * 60}ms` }}>
+                <span className="mb-1 inline-block uppercase tracking-[0.4em]">{field.label}</span>
+                <input
+                  type={field.type || "text"}
+                  name={field.name}
+                  defaultValue={pro[field.name]}
+                  className="mt-1 w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-white focus:border-indigo-500 focus:outline-none"
+                />
+              </label>
+            ))}
+            <div className="grid gap-3 sm:grid-cols-2">
+              <button type="submit" className="rounded-2xl bg-gradient-to-r from-indigo-500 to-blue-500 px-6 py-3 text-sm font-semibold uppercase tracking-[0.4em] text-white">
+                {copy.save}
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="rounded-2xl border border-white/20 px-6 py-3 text-sm font-semibold uppercase tracking-[0.4em] text-white"
+              >
+                {copy.cancel}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default Laptop;
