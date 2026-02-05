@@ -8,7 +8,6 @@ require("dotenv").config();
 
 // Cybersecurity
 const rateLimit = require("express-rate-limit");
-const mongoSanitize  = require("express-mongo-sanitize");
 const helmet = require("helmet");
 
 
@@ -43,8 +42,6 @@ app.use(cookieParser());
 // mongoSanitizer ეს არის შუამავალი ფუნქცია რომელიც გამოიყენება უსაფრთხოებისთვის ის ასუფთავებს requset-დან წამოსულ საშიშ
 // mongoDB-ის ოპერატორებს ასევე ფილტრავს req.bodd–ის req.querys-ს req.params და req.headers ის შლის ოპერატორვბეს რომელბიც შეიცავს 
 // $ და . რომ მომხარებელმა ვერ შეძლოს საშიში ოპერატორების გამოყენება 
-app.use(mongoSanitize());
-
 // rateLimit ეს არის შუამავალი ფუნქცია რომელიც გამოიყენება უსაფრთხოებისთვის ის ეხმარება სერვერს რომ თავი აირიდოს dos და პატარა 
 // ddos შეტევებისგან და სერევრის გათიშვისგან ბევრი request-ის გაგაზვნით ის აწესებს limit-ს და დროს თუ რამდენ ხანში უნდა აღადგინო
 // სრულიად limit-ი
