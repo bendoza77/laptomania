@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useLaptop } from "../context/LaptopContext";
 import { useCart } from "../context/Cart.content";
@@ -68,6 +69,12 @@ const Laptop = ({ el: pro }) => {
       </div>
 
       <div className="flex flex-wrap gap-3 animate-slide-in">
+        <Link
+          to={`/laptops/${pro._id}`}
+          className="rounded-2xl border border-white/20 px-5 py-2 text-sm font-semibold uppercase tracking-[0.35em] text-white/90 hover:bg-white/10"
+        >
+          View
+        </Link>
         {["admin", "moderator"].includes(user?.role) && (
           <>
             <button

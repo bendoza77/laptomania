@@ -88,7 +88,8 @@ const signup = catchAsync(async (req, res, next) => {
 
 const login = catchAsync(async (req, res, next) => {
 
-    const { email, password } = req.body
+    const { email, password } = req.body;
+
 
     if (!email || !password) {
         return next(new AppError("Email and Password required", 400));
@@ -100,6 +101,7 @@ const login = catchAsync(async (req, res, next) => {
         return next(new AppError("User not found", 404));
     }
 
+    console.log("hello world")
     const isCorrect = await user.comparePassword(password, user.password);
 
 
