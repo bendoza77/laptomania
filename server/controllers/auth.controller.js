@@ -13,7 +13,7 @@ const createSendToken = (user, message, statusCode, res) => {
         maxAge: ms(process.env.JWT_EXPIRE),
         httpOnly: true,
         secure: process.env.NODE_ENV !== "dev",
-        samSite: "Lax"
+        sameSite: process.env.NODE_ENV === "prod" ? "none" : "Lax"
     }
 
     user.password = undefined;
